@@ -80,7 +80,7 @@ pipeline {
             }
         }
     }
-    post {
+    /*post {
         always {
             //executes always no matter was build successful ot not
         }
@@ -92,5 +92,6 @@ pipeline {
         failure {
             //executes only if build failed
         }
-    }
+    }*/
 }
+/
