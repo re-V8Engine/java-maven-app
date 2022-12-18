@@ -26,7 +26,7 @@ pipeline {
     //environment block is for definins custom env variables
     environment {
         //app version for example (usually exctracted from the code)
-        APP_VERSION = ${params.VERSION}
+        APP_VERSION = "${params.VERSION}"
         //fetching credentials by ID from Jenkins using credintial binding plugin
         SERVER_CREDENTIALS = credentials('server-credentials')
     }
