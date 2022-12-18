@@ -17,7 +17,9 @@ pipeline {
             steps {
                 echo "Executing pipeline for branch ${BRANCH_NAME}"
                 echo "Testing application..."
-                gv.testApp()
+                script {
+                    gv.testApp()
+                }
             }
         }
         stage('build jar') {
