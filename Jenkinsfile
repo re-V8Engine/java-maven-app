@@ -1,6 +1,8 @@
 //jenkins-host:8080/env-vars.html - list of all Jenkins env variables
 //define variable
 //CODE_CHANGES = getGitChanges()
+//Globally defining gv variable to store external groovy script
+def gv 
 pipeline {
     agent any
 
@@ -24,12 +26,19 @@ pipeline {
     //environment block is for definins custom env variables
     environment {
         //app version for example (usually exctracted from the code)
-        APP_VERSION = '1.4.0'
+        APP_VERSION = ${params.VERSION}
         //fetching credentials by ID from Jenkins using credintial binding plugin
         SERVER_CREDENTIALS = credentials('server-credentials')
     }
 
     stages {
+        stage('Init') {
+            steps {
+                script {
+                    gv = load "script.groovy"
+                }
+            }
+        }
         stage('Build') {
             /*when {
                 expression {
@@ -38,9 +47,11 @@ pipeline {
                  }
             }*/
             steps {
-                echo 'Building..'
+                script {
+                    gv.buildApp()
+                }
                 //example usage of custom env variable (variable usage requires "" double quotes)
-                echo "Building version ${APP_VERSION}..."
+                //echo "Building version ${APP_VERSION}..."
             }
         }
         stage('Test') {
@@ -61,14 +72,18 @@ pipeline {
                 }
             }
             steps {
-                echo 'Testing...'
+                script {
+                    gv.testApp()
+                }
             }
         }
         stage('Deploy') {
             steps {
-                echo 'Deploying...'
+                script {
+                    gv.deployApp()
+                }
                 //usage of parameters
-                echo "Deploying version ${params.VERSION}..."
+                //echo "Deploying version ${params.VERSION}..."
                 //echo "Deploy with ${SERVER_CREDENTIALS}..."
                 //or using wrapper
                 //[] is object syntax in Groovy
