@@ -26,7 +26,7 @@ pipeline {
         stage('build jar') {
             steps {
                 script {
-                    buildApp 'v8engine/java-maven-app:1.4.1'
+                    buildApp('v8engine/java-maven-app:1.4.1')
                 }
             }
         }
