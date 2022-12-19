@@ -24,11 +24,6 @@ pipeline {
             }
         }
         stage('build jar') {
-            when {
-                expression {
-                    BRANCH_NAME == 'main'
-                }
-            }
             steps {
                 script {
                     buildApp()
@@ -36,11 +31,6 @@ pipeline {
             }
         }
         stage('build image') {
-            when {
-                expression {
-                    BRANCH_NAME == 'main'
-                }
-            }
             steps {
                 script {
                     buildImage()
@@ -48,11 +38,6 @@ pipeline {
             }
         }
         stage('deploy') {
-            when {
-                expression {
-                    BRANCH_NAME == 'main'
-                }
-            }
             steps {
                 script {
                     echo "Deploying..."
