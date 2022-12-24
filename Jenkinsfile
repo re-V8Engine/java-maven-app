@@ -13,6 +13,9 @@ pipeline {
     tools {
         maven "maven-3.8"
     }
+    environment {
+        DOCKER_IMAGE_NAME = 'v8engine/java-maven-app:1.4.1'
+    }
     stages {
         stage('init') {
             steps {
@@ -40,7 +43,15 @@ pipeline {
         stage('build image') {
             steps {
                 script {
-                    buildImage 'v8engine/java-maven-app:1.4.1'
+                    dockerBuild(${DOCKER_IMAGE_NAME})
+                }
+            }
+        }
+        stage('push image') {
+            steps {
+                script {
+                    dockerLogin('dockerhub-credentials')
+                    dockerPush(${DOCKER_IMAGE_NAME})
                 }
             }
         }
