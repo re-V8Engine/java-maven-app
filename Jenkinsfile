@@ -7,15 +7,14 @@ library identifier: 'jenkins-shared-library@main', retriever: modernSCM(
     ]
 )
 def gv
+def dockerImageName = 'v8engine/java-maven-app:1.4.1'
 
 pipeline {
     agent any
     tools {
         maven "maven-3.8"
     }
-    environment {
-        DOCKER_IMAGE_NAME = 'v8engine/java-maven-app:1.4.1'
-    }
+
     stages {
         stage('init') {
             steps {
@@ -43,7 +42,7 @@ pipeline {
         stage('build image') {
             steps {
                 script {
-                    dockerBuild $DOCKER_IMAGE_NAME
+                    dockerBuild "$dockerImageName"
                 }
             }
         }
@@ -51,7 +50,7 @@ pipeline {
             steps {
                 script {
                     dockerLogin 'dockerhub-credentials'
-                    dockerPush $DOCKER_IMAGE_NAME
+                    dockerPush "$dockerImageName"
                 }
             }
         }
