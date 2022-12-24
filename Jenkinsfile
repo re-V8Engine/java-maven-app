@@ -19,6 +19,7 @@ pipeline {
         stage('init') {
             steps {
                 script {
+                    echo "Testing build trigger"
                     gv = load "script.groovy"
                 }
             }
