@@ -43,15 +43,15 @@ pipeline {
         stage('build image') {
             steps {
                 script {
-                    dockerBuild(${DOCKER_IMAGE_NAME})
+                    dockerBuild $DOCKER_IMAGE_NAME
                 }
             }
         }
         stage('push image') {
             steps {
                 script {
-                    dockerLogin('dockerhub-credentials')
-                    dockerPush(${DOCKER_IMAGE_NAME})
+                    dockerLogin 'dockerhub-credentials'
+                    dockerPush $DOCKER_IMAGE_NAME
                 }
             }
         }
