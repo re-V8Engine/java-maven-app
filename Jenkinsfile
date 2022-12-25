@@ -80,7 +80,7 @@ pipeline {
         stage('commit version update') {
             steps {
                 script {
-                    echo 'Testing jenkins push ignore...'
+                    echo 'Testing jenkins push ignore....'
                     withCredentials([string(credentialsId: 'github-token', variable: 'TOKEN')]) {
                         sh "git remote set-url origin https://${TOKEN}@github.com/re-V8Engine/java-maven-app.git"
                         sh 'git add .'
