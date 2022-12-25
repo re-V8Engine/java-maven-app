@@ -10,6 +10,7 @@ def gv
 def dockerRepo = 'v8engine'
 def dockerImageName = 'java-maven-app'
 def dockerTag
+def version
 
 pipeline {
     agent any
@@ -33,7 +34,7 @@ pipeline {
                     sh "mvn build-helper:parse-version versions:set \
                     -DnewVersion=\\\${parsedVersion.majorVersion}.\\\${parsedVersion.minorVersion}.\\\${parsedVersion.nextIncrementalVersion} versions:commit"
                     def matcher = readFile('pom.xml') =~ '<version>(.*)</version>'
-                    def version = matcher[0][1]
+                    version = matcher[0][1]
                     dockerTag = "$version-$BUILD_NUMBER"
                 }
             }
@@ -73,6 +74,25 @@ pipeline {
             steps {
                 script {
                     echo "Deploying..."
+                }
+            }
+        }
+        stage('commit version update') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'github-credentials', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
+                        sh 'git config --global user.email "jenkins@example.com"'
+                        sh 'git config --global user.name "jenkins"'
+
+                        sh 'git status'
+                        sh 'git branch'
+                        sh 'git config --list'
+
+                        sh "git remote set-url origin https://${USER}:${PASS}@github.com/re-V8Engine/java-maven-app.git"
+                        sh 'git add .'
+                        sh "git commit -m \\\"CI: version bump $version\\\""
+                        sh 'git push origin HEAD:jenkins-jobs'
+                    }
                 }
             }
         }
