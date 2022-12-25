@@ -7,7 +7,9 @@ library identifier: 'jenkins-shared-library@main', retriever: modernSCM(
     ]
 )
 def gv
-def dockerImageName = 'v8engine/java-maven-app:1.4.1'
+def dockerRepo = 'v8engine'
+def dockerImageName = 'java-maven-app'
+def dockerTag
 
 pipeline {
     agent any
@@ -21,6 +23,20 @@ pipeline {
                 script {
                     echo "Testing build trigger"
                     gv = load "script.groovy"
+                }
+            }
+        }
+        stage('increment version') {
+            steps {
+                script {
+                    echo "Incrementing version..."
+                    sh "mvn build-helper:parse-version versions:set \
+                    -DnewVersion=\\\${parsedVersion.majorVersion}.\
+                    \\\${parsedVersion.minorVersion}.\
+                    \\\${parsedVersion.nextIncrementalVersion} versions:commit"
+                    def matcher = readFile('pom.xml') =~ '<version>(.*)</version>'
+                    def version = matcher[0][1]
+                    dockerTag = "$version-$BUILD_NUMBER"
                 }
             }
         }
@@ -43,7 +59,7 @@ pipeline {
         stage('build image') {
             steps {
                 script {
-                    dockerBuild "$dockerImageName"
+                    dockerBuild "$dockerRepo/$dockerImageName:$dockerTag"
                 }
             }
         }
@@ -51,7 +67,7 @@ pipeline {
             steps {
                 script {
                     dockerLogin 'dockerhub-credentials'
-                    dockerPush "$dockerImageName"
+                    dockerPush "$dockerRepo/$dockerImageName:$dockerTag"
                 }
             }
         }
