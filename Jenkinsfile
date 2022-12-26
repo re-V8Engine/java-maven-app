@@ -81,12 +81,10 @@ pipeline {
             steps {
                 script {
                     echo 'Testing jenkins push ignore....'
-                    withCredentials([string(credentialsId: 'github-token', variable: 'TOKEN')]) {
-                        sh "git remote set-url origin https://${TOKEN}@github.com/re-V8Engine/java-maven-app.git"
-                        sh 'git add .'
-                        sh "git commit -m 'CI: version bump $version'"
-                        sh 'git push origin HEAD:jenkins-jobs'
-                    }
+                    gitSetRemote('github-token', 'github.com/re-V8Engine/java-maven-app.git')
+                    gitAddAll()
+                    gitCommit "CI: version bump $version"
+                    gitPush 'jenkins-jobs'
                 }
             }
         }
