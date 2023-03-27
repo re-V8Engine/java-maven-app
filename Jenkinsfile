@@ -11,6 +11,7 @@ def dockerRepo = 'v8engine'
 def dockerImageName = 'java-maven-app'
 def dockerTag
 def version
+def context = '.'
 
 pipeline {
     agent any
@@ -58,7 +59,7 @@ pipeline {
         stage('build image') {
             steps {
                 script {
-                    dockerBuild "$dockerRepo/$dockerImageName:$dockerTag"
+                    dockerBuild "$dockerRepo/$dockerImageName:$dockerTag, $context"
                 }
             }
         }
